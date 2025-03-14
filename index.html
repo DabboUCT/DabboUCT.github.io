@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla desde JSON</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Datos de matriz de transicion</h1>
+    <table id="data-table">
+        <thead>
+            <tr id="table-header"></tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+    </table>
+
+    <script>
+        // Función para cargar el archivo JSON y generar la tabla
+        fetch('./matriz_transicion.json')
+            .then(response => response.json())
+            .then(data => {
+                const tableHeader = document.getElementById('table-header');
+                const tableBody = document.getElementById('table-body');
+
+                // Obtener las claves de las columnas desde el primer objeto
+                const rowKeys = Object.keys(data);
+                const columnKeys = Object.keys(data[rowKeys[0]]);
+
+                // Generar los encabezados de la tabla
+                let headerRow = '<th>estado</th>'; // Primera columna para el índice de la fila
+                rowKeys.forEach(col => {//se usaria columna si estuviera en formato int 
+                    headerRow += `<th>${col}</th>`;
+                });
+                tableHeader.innerHTML = headerRow;
+
+                // Generar las filas de la tabla
+                rowKeys.forEach(rowKey => {
+                    let rowHtml = `<td>${rowKey}</td>`; // Primera columna con el índice de la fila
+                    columnKeys.forEach(col => {
+                        const value = data[rowKey][col] || 0; // Si no existe el valor, asigna 0
+                        rowHtml += `<td>${value}</td>`;
+                    });
+                    tableBody.innerHTML += `<tr>${rowHtml}</tr>`;
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar el archivo JSON:', error);
+            });
+    </script>
+
+</body>
+</html>
